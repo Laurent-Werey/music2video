@@ -1,0 +1,17 @@
+
+#!/bin/sh
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH -t 24:00:00
+#SBATCH --gres=gpu:1
+#SBATCH --constraint="gpua100|gpurtx6000|gpurtx5000|gpuv100|gpu1080|gpup100"
+#SBATCH -p publicgpu
+
+module load cuda/cuda-11.2
+module load python/Miniconda3
+
+python main.py
+
+And then you run this with:
+
+sbatch name_of_the_script.sh
