@@ -63,7 +63,7 @@ def main():
                 print("Retrying...")
                 count += 1
             if count >= 5:
-                print(f"Failed to download video {row['ytid']}")
+                Logger().error(f"Failed to download video {row['ytid']}")
         else:
             print(f"File already exists for video {row['ytid']}, skipping...")
 
