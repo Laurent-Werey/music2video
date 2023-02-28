@@ -5,6 +5,7 @@ import datetime
 import json
 import subprocess
 import os
+import time
 
 class Logger(object):
     def __init__(self):
@@ -38,24 +39,33 @@ def dl_from_url(link, start_time, end_time):
         'retry-on-error': True,
         'logger': Logger()
     }
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        meta = ydl.extract_info(ydl_rootlink + link, download=True)
-        subprocess.run(['ffmpeg', '-y', '-i', output_filename + 'full.mp3', '-ss', str(start_time), '-t', str(end_time - start_time), '-acodec', 'copy', output_filename + '.mp3'])
-        os.remove(output_filename + 'full.mp3')
-        with open(output_filename + '.json', 'w') as metadata_file:
-            json.dump(meta, metadata_file, indent=4)
+    try:
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            meta = ydl.extract_info(ydl_rootlink + link, download=True)
+            subprocess.run(['ffmpeg', '-y', '-i', output_filename + 'full.mp3', '-ss', str(start_time), '-t', str(end_time - start_time), '-acodec', 'copy', output_filename + '.mp3'])
+            os.remove(output_filename + 'full.mp3')
+            with open(output_filename + '.json', 'w') as metadata_file:
+                json.dump(meta, metadata_file, indent=4)
+            return True
+    except Exception as e:
+        Logger().error(f"Error downloading video {link}: {e}")
+        return False
 
 def main():
     df = pd.read_csv(r'./musiccaps-public.csv')
     for index, row in df[['ytid', 'start_s', 'end_s']].iterrows():
         print(f'[{index}/{len(df.index)}]')
-        dl_from_url(row['ytid'], row['start_s'], row['end_s'])
-
+        output_filename = './audio-files/' + row['ytid'] + '/' + row['ytid']
+        if not os.path.exists(output_filename + '.mp3'):
+            count = 0
+            while not dl_from_url(row['ytid'], row['start_s'], row['end_s']) and count < 5:
+                time.sleep(5)
+                print("Retrying...")
+                count += 1
+            if count >= 5:
+                print(f"Failed to download video {row['ytid']}")
+        else:
+            print(f"File already exists for video {row['ytid']}, skipping...")
 
 if __name__ == "__main__":
     main()
-#%%
-
-#%%
-
-#%%
