@@ -6,6 +6,7 @@ import json
 import subprocess
 import os
 import time
+import argparse
 
 class Logger(object):
     def __init__(self):
@@ -51,9 +52,9 @@ def dl_from_url(link, start_time, end_time):
         Logger().error(f"Error downloading video {link}: {e}")
         return False
 
-def main():
+def main(start_index, end_index):
     df = pd.read_csv(r'./musiccaps-public.csv')
-    for index, row in df[['ytid', 'start_s', 'end_s']].iterrows():
+    for index, row in df[['ytid', 'start_s', 'end_s']].iloc[start_index:end_index].iterrows():
         print(f'[{index}/{len(df.index)}]')
         output_filename = './audio-files/' + row['ytid'] + '/' + row['ytid']
         if not os.path.exists(output_filename + '.mp3'):
@@ -68,4 +69,9 @@ def main():
             print(f"File already exists for video {row['ytid']}, skipping...")
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("start_index", help="Start index for exploring CSV", type=int)
+    parser.add_argument("end_index", help="End index for exploring CSV", type=int)
+    args = parser.parse_args()
+
+    main(args.start_index, args.end_index)
