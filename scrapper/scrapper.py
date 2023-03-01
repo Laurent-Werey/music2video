@@ -37,8 +37,7 @@ def dl_from_url(link, start_time, end_time):
         # 'simulate': True,
         'outtmpl': output_filename + 'full.%(ext)s',
         'max_retries': 10,
-        'retry-on-error': True,
-        'logger': Logger()
+        'retry-on-error': True
     }
     try:
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
@@ -49,7 +48,7 @@ def dl_from_url(link, start_time, end_time):
                 json.dump(meta, metadata_file, indent=4)
             return True
     except Exception as e:
-        Logger().error(f"Error downloading video {link}: {e}")
+        print(f"Error downloading video {link}: {e}")
         return False
 
 def main(start_index, end_index):
