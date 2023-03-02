@@ -1,6 +1,6 @@
 # Projet Master
 
-
+![Architecture](architecture.png)
 
 ## File structure
 
