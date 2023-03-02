@@ -58,12 +58,12 @@ def main(start_index, end_index):
         output_filename = './audio-files/' + row['ytid'] + '/' + row['ytid']
         if not os.path.exists(output_filename + '.mp3'):
             count = 0
-            while not dl_from_url(row['ytid'], row['start_s'], row['end_s']) and count < 5:
-                time.sleep(5)
+            while not dl_from_url(row['ytid'], row['start_s'], row['end_s']) and count < 2:
+                time.sleep(1)
                 print("Retrying...")
                 count += 1
-            if count >= 5:
-                Logger().error(f"Failed to download video {row['ytid']}")
+            if count >= 2:
+                Logger().error(f"{row['ytid']} , ")
         else:
             print(f"File already exists for video {row['ytid']}, skipping...")
 
