@@ -1,0 +1,3 @@
+[submodule "deforum-stable-diffusion"]
+	path = deforum-stable-diffusion
+	url = https://github.com/nilCux/deforum-stable-diffusion.git
